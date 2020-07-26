@@ -1,3 +1,4 @@
+import reload from '@riotjs/hot-reload'
 import * as riot from 'riot'
 import App from './app.riot'
 
