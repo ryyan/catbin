@@ -1,0 +1,77 @@
+<encrypt>
+  <form>
+    <textarea id="text" type="text" rows="30" cols="90" 
+      onkeyup={ editText } 
+      value={ state.encryptedText || state.text } 
+      disabled={ state.pass }>
+    </textarea>
+    <br />
+
+    <label for="password">Password:</label>
+    <input id="password" name="password" type="text" 
+      onkeyup={ editPass } 
+      value={ state.pass } 
+      disabled={ !state.text } />
+    <br />
+
+    <label for="expiration">Expiration:</label>
+    <select id="expiration" name="expiration" onchange={ selectExpiration } value={ state.expiration }>
+      <option value="hour">1 Hour</option>
+      <option value="day">1 Day</option>
+      <option value="week">1 Week</option>
+      <option value="month">1 Month</option>
+      <option value="year">1 Year</option>
+    </select>
+    <br />
+
+    <button type="button" disabled={ !state.text || !state.pass } onclick={ submit }>Submit</button>
+  </form>
+
+  <script>
+    import { AES, Rabbit, enc } from "crypto-js";
+
+    export default {
+      onBeforeMount(props, state) {
+        this.state = {
+          text: "",
+          pass: "",
+          encryptedText: "",
+          expiration: "hour",
+        };
+      },
+
+      editText(e) {
+        this.update({
+          text: e.target.value
+        });
+      },
+
+      editPass(e) {
+        const key = e.target.value;
+
+        if (key) {
+          this.update({
+            pass: key,
+            encryptedText: Rabbit.encrypt(AES.encrypt(this.state.text, key).toString(), key).toString(),
+          });
+        } else {
+          this.update({
+            pass: "",
+            encryptedText: "",
+          });
+        }
+      },
+
+      selectExpiration(e) {
+        this.update({
+          expiration: e.target.value
+        });
+      },
+
+      submit(e) {
+        console.log(this.state);
+        console.log(enc.Base64.parse(this.state.encryptedText).toString());
+      }
+    }
+  </script>
+</encrypt>
