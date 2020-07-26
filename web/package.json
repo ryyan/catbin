@@ -1,0 +1,21 @@
+{
+  "name": "catbin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": "true",
+  "dependencies": {
+    "riot": "^4.13.2"
+  },
+  "devDependencies": {
+    "@riotjs/hot-reload": "^4.0.1",
+    "@riotjs/compiler": "^4.9.2",
+    "@riotjs/ssr": "^4.2.1",
+    "@riotjs/parcel-plugin-riot": "^4.0.1",
+    "parcel-bundler": "^1.12.4"
+  },
+  "scripts": {
+    "build": "parcel build index.html --out-dir=dist",
+    "start": "parcel index.html --open"
+  }
+}
