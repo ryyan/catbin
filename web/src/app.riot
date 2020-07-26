@@ -1,4 +1,21 @@
 <app>
   <h1>catbin</h1>
-  <encrypt />
+  <encrypt if={ !state.id } />
+  <decrypt id={ state.id } if={ state.id } />
+
+  <script>
+    export default {
+      onBeforeMount(props, state) {
+        let id = "";
+        const path = window.location.pathname;
+        if (path !== "/") {
+          id = path.split("/")[1];
+        }
+
+        this.state = {
+          id: id,
+        };
+      },
+    }
+  </script>
 </app>

@@ -1,0 +1,50 @@
+<decrypt>
+  <form>
+    <textarea id="text" type="text" rows="30" cols="90" 
+      value={ state.decryptedText || state.text } 
+      disabled>
+    </textarea>
+    <br />
+
+    <label for="password">Decryption Password:</label>
+    <input id="password" name="password" type="text" 
+      onkeyup={ editPass } 
+      value={ state.pass } />
+    <br />
+
+    <label for="expiration">Expires on:</label> ...
+  </form>
+
+  <script>
+    import { AES, Rabbit, enc } from "crypto-js";
+
+    export default {
+      onBeforeMount(props, state) {
+        console.log(props.id);
+
+        this.state = {
+          text: "",
+          pass: "",
+          decryptedText: "",
+          expiration: "hour",
+        };
+      },
+
+      editPass(e) {
+        const key = e.target.value;
+
+        if (key) {
+          this.update({
+            pass: key,
+            decryptedText: AES.decrypt(Rabbit.decrypt(this.state.text, key).toString(), key).toString(),
+          });
+        } else {
+          this.update({
+            pass: "",
+            decryptedText: "",
+          });
+        }
+      },
+    }
+  </script>
+</decrypt>
