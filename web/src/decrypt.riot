@@ -36,7 +36,7 @@
         if (key) {
           this.update({
             pass: key,
-            decryptedText: AES.decrypt(Rabbit.decrypt(this.state.text, key).toString(), key).toString(),
+            decryptedText: AES.decrypt(Rabbit.decrypt(this.state.text, enc.Base64.stringify(key)).toString(), key).toString(),
           });
         } else {
           this.update({
