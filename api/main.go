@@ -20,7 +20,7 @@ func main() {
 	serveMux := http.NewServeMux()
 	serveMux.HandleFunc("/msg", handler)
 	serveMux.HandleFunc("/msg/", handler)
-	//serveMux.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("../web/dist"))))
+	serveMux.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("../web/dist"))))
 
 	// Start server
 	log.Println("Serving http at localhost:5000")
@@ -35,7 +35,7 @@ func handler(res http.ResponseWriter, req *http.Request) {
 			writeError(res, "Missing id")
 			return
 		}
-		
+
 		log.Println(id)
 
 	case "POST":
