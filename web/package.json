@@ -16,7 +16,7 @@
     "parcel-bundler": "^1.12.4"
   },
   "scripts": {
-    "build": "parcel build index.html --out-dir=dist",
+    "build": "parcel build index.html --out-dir=dist --experimental-scope-hoisting",
     "start": "parcel index.html --open"
   }
 }
