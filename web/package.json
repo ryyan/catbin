@@ -5,7 +5,6 @@
   "main": "index.js",
   "private": "true",
   "dependencies": {
-    "crypto-js": "^4.0.0",
     "riot": "^4.13.2"
   },
   "devDependencies": {

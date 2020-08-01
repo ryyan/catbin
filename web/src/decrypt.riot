@@ -16,7 +16,7 @@
   </form>
 
   <script>
-    import { AES, Rabbit, enc } from "crypto-js";
+    import { decrypt } from "./encryption.js";
 
     export default {
       onBeforeMount(props, state) {
@@ -36,7 +36,7 @@
         if (key) {
           this.update({
             pass: key,
-            decryptedText: AES.decrypt(Rabbit.decrypt(this.state.text, enc.Base64.stringify(key)).toString(), key).toString(),
+            decryptedText: decrypt(key, this.state.text),
           });
         } else {
           this.update({

@@ -28,7 +28,7 @@
   </form>
 
   <script>
-    import { AES, Rabbit, enc } from "crypto-js";
+    import { encrypt } from "./encryption.js";
 
     export default {
       onBeforeMount(props, state) {
@@ -52,7 +52,7 @@
         if (key) {
           this.update({
             pass: key,
-            encryptedText: Rabbit.encrypt(AES.encrypt(this.state.text, key).toString(), key).toString(),
+            encryptedText: encrypt(key, this.state.text),
           });
         } else {
           this.update({
@@ -70,7 +70,6 @@
 
       submit(e) {
         console.log(this.state);
-        console.log(enc.Base64.parse(this.state.encryptedText).toString());
       }
     }
   </script>
