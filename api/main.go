@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"io"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -27,8 +29,8 @@ var (
 )
 
 type response struct {
-	Text       string
 	Expiration string
+	Text       string
 }
 
 func main() {
@@ -76,8 +78,22 @@ func getText(id string) (string, error) {
 		return "", errors.New("Missing id")
 	}
 
-	log.Println(id)
-	return "OK", nil
+	// read text file
+	data, err := ioutil.ReadFile(FilesDir + "/" + id)
+	if err != nil {
+		return "", errors.New("Text not found")
+	}
+
+	dataArr := strings.Split(string(data), "\n")
+	result, err := json.Marshal(&response{
+		Expiration: dataArr[0],
+		Text:       dataArr[1],
+	})
+	if err != nil {
+		log.Fatalf("Failed to marshal json: %s", err)
+	}
+
+	return string(result), nil
 }
 
 func saveText(text string, expiration string) (string, error) {
