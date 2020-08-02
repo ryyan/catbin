@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	FilesDir = ".files"
+	FilesDir   = ".files"
+	DateFormat = time.RFC3339
 
 	// expiration times
 	Day   = time.Hour * 24
@@ -24,6 +25,11 @@ const (
 var (
 	expirations = []string{"hour", "day", "week", "month", "year"}
 )
+
+type response struct {
+	Text       string
+	Expiration string
+}
 
 func main() {
 	// Create directory that texts will be saved to
@@ -74,7 +80,7 @@ func getText(id string) (string, error) {
 	return "OK", nil
 }
 
-func saveText(text string, expiration string) (result string, err error) {
+func saveText(text string, expiration string) (string, error) {
 	// validate
 	if text == "" {
 		return "", errors.New("Missing field: text")
@@ -97,6 +103,7 @@ func saveText(text string, expiration string) (result string, err error) {
 	case "year":
 		expirationDate = expirationDate.Add(Year)
 	}
+	expirationStr := expirationDate.Format(DateFormat)
 
 	// generate ID
 	id := generateId(36)
@@ -109,7 +116,7 @@ func saveText(text string, expiration string) (result string, err error) {
 	defer file.Close()
 
 	// save text file
-	_, err = file.WriteString(expirationDate.String() + "\n" + text)
+	_, err = file.WriteString(expirationStr + "\n" + text)
 	if err != nil {
 		log.Fatalf("Failed writing to file: %s", err)
 	}
