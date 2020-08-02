@@ -98,10 +98,23 @@ func saveText(text string, expiration string) (result string, err error) {
 		expirationDate = expirationDate.Add(Year)
 	}
 
-	log.Println(expirationDate)
-	log.Println(generateId(36))
+	// generate ID
+	id := generateId(36)
 
-	return "OK", nil
+	// create text file
+	file, err := os.Create(FilesDir + "/" + id)
+	if err != nil {
+		log.Fatalf("Failed creating file: %s", err)
+	}
+	defer file.Close()
+
+	// save text file
+	_, err = file.WriteString(expirationDate.String() + "\n" + text)
+	if err != nil {
+		log.Fatalf("Failed writing to file: %s", err)
+	}
+
+	return id, nil
 }
 
 func stringInSlice(toFind string, list []string) bool {
