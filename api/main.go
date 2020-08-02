@@ -16,6 +16,9 @@ import (
 )
 
 const (
+	// Port to run the server on
+	Port = ":5000"
+
 	// TextDir is the directory that texts will be saved to
 	// The filename will be the text ID, first line the expiration, second line the text itself
 	TextDir = ".text"
@@ -60,8 +63,8 @@ func main() {
 	serveMux.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("../web/dist"))))
 
 	// Start server
-	log.Println("Server started at localhost:5000")
-	log.Fatal(http.ListenAndServe(":5000", serveMux))
+	log.Printf("Server started at localhost%s\n", Port)
+	log.Fatal(http.ListenAndServe(Port, serveMux))
 }
 
 func handler(res http.ResponseWriter, req *http.Request) {
