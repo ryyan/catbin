@@ -11,17 +11,15 @@ import (
 )
 
 const (
-	Day = time.Hour * 24
-	Week = Day * 7
+	Day   = time.Hour * 24
+	Week  = Day * 7
 	Month = Day * 31
-	Year = Day * 365
+	Year  = Day * 365
 )
-
 
 var (
 	expirations = []string{"hour", "day", "week", "month", "year"}
 )
-
 
 func main() {
 	// Create directory that messages will be saved to
