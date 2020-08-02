@@ -30,8 +30,8 @@ var (
 )
 
 type response struct {
-	Expiration string
-	Text       string
+	Expiration string `json:"expiration"`
+	Text       string `json:"text"`
 }
 
 func main() {
