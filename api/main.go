@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -28,29 +29,47 @@ func main() {
 }
 
 func handler(res http.ResponseWriter, req *http.Request) {
+	var result string
+	var err error
+
 	switch req.Method {
 	case "GET":
 		id := strings.TrimLeft(req.URL.Path, "msg/")
-		if id == "" {
-			writeError(res, "Missing id")
-			return
-		}
-
-		log.Println(id)
+		result, err = getText(id)
 
 	case "POST":
 		req.ParseForm()
 		text := req.FormValue("text")
 		expiration := req.FormValue("expiration")
-		if text == "" {
-			writeError(res, "Missing field: text")
-			return
-		}
-		if !stringInSlice(expiration, expirations) {
-			writeError(res, "Missing or invalid field: expiration")
-			return
-		}
+		result, err = saveText(text, expiration)
 	}
+
+	if err != nil {
+		res.WriteHeader(http.StatusBadRequest)
+		io.WriteString(res, err.Error())
+	} else {
+		io.WriteString(res, result)
+	}
+}
+
+func getText(id string) (string, error) {
+	if id == "" {
+		return "", errors.New("Missing id")
+	}
+
+	log.Println(id)
+	return "OK", nil
+}
+
+func saveText(text string, expiration string) (result string, err error) {
+	if text == "" {
+		return "", errors.New("Missing field: text")
+	}
+	if !stringInSlice(expiration, expirations) {
+		return "", errors.New("Missing or invalid field: expiration")
+	}
+
+	return "OK", nil
 }
 
 func stringInSlice(toFind string, list []string) bool {
@@ -60,14 +79,4 @@ func stringInSlice(toFind string, list []string) bool {
 		}
 	}
 	return false
-}
-
-func write(res http.ResponseWriter, msg string) {
-	res.WriteHeader(http.StatusOK)
-	io.WriteString(res, msg)
-}
-
-func writeError(res http.ResponseWriter, err string) {
-	res.WriteHeader(http.StatusBadRequest)
-	io.WriteString(res, err)
 }
