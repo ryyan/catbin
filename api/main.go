@@ -4,6 +4,7 @@ import (
 	"errors"
 	"io"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"strings"
@@ -11,6 +12,9 @@ import (
 )
 
 const (
+	FilesDir = ".files"
+
+	// expiration times
 	Day   = time.Hour * 24
 	Week  = Day * 7
 	Month = Day * 31
@@ -22,10 +26,10 @@ var (
 )
 
 func main() {
-	// Create directory that messages will be saved to
-	os.Mkdir(".files", 0755)
+	// Create directory that texts will be saved to
+	os.Mkdir(FilesDir, 0755)
 
-	// Set api endpoints
+	// Set endpoints
 	serveMux := http.NewServeMux()
 	serveMux.HandleFunc("/msg", handler)
 	serveMux.HandleFunc("/msg/", handler)
@@ -95,6 +99,7 @@ func saveText(text string, expiration string) (result string, err error) {
 	}
 
 	log.Println(expirationDate)
+	log.Println(generateId(36))
 
 	return "OK", nil
 }
@@ -106,4 +111,34 @@ func stringInSlice(toFind string, list []string) bool {
 		}
 	}
 	return false
+}
+
+// generateId code from https://stackoverflow.com/questions/22892120
+const (
+	letterBytes   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+	letterIdxBits = 6                    // 6 bits to represent a letter index
+	letterIdxMask = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+)
+
+var (
+	random = rand.NewSource(time.Now().UTC().UnixNano())
+)
+
+func generateId(n int) string {
+	sb := strings.Builder{}
+	sb.Grow(n)
+	for i, cache, remain := n-1, random.Int63(), letterIdxMax; i >= 0; {
+		if remain == 0 {
+			cache, remain = random.Int63(), letterIdxMax
+		}
+		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
+			sb.WriteByte(letterBytes[idx])
+			i--
+		}
+		cache >>= letterIdxBits
+		remain--
+	}
+
+	return sb.String()
 }
