@@ -22,7 +22,7 @@
       onBeforeMount(props, state) {
         this.state = {
           text: props.text,
-          expiration: props.expiration,
+          expiration: new Date(props.expiration),
           pass: "",
           decryptedText: "",
         };
