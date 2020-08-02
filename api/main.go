@@ -14,14 +14,15 @@ import (
 )
 
 const (
-	FilesDir   = ".files"
-	DateFormat = time.RFC3339
+	// Directory that texts will be saved to
+	TextDir = ".text"
 
-	// expiration times
-	Day   = time.Hour * 24
-	Week  = Day * 7
-	Month = Day * 31
-	Year  = Day * 365
+	// Expiration times and format
+	Day        = time.Hour * 24
+	Week       = Day * 7
+	Month      = Day * 31
+	Year       = Day * 365
+	DateFormat = time.RFC3339
 )
 
 var (
@@ -34,8 +35,8 @@ type response struct {
 }
 
 func main() {
-	// Create directory that texts will be saved to
-	os.Mkdir(FilesDir, 0755)
+	// Create texts directory
+	os.Mkdir(TextDir, 0755)
 
 	// Set endpoints
 	serveMux := http.NewServeMux()
@@ -79,11 +80,12 @@ func getText(id string) (string, error) {
 	}
 
 	// read text file
-	data, err := ioutil.ReadFile(FilesDir + "/" + id)
+	data, err := ioutil.ReadFile(TextDir + "/" + id)
 	if err != nil {
 		return "", errors.New("Text not found")
 	}
 
+	// parse file
 	dataArr := strings.Split(string(data), "\n")
 	result, err := json.Marshal(&response{
 		Expiration: dataArr[0],
@@ -125,7 +127,7 @@ func saveText(text string, expiration string) (string, error) {
 	id := generateId(36)
 
 	// create text file
-	file, err := os.Create(FilesDir + "/" + id)
+	file, err := os.Create(TextDir + "/" + id)
 	if err != nil {
 		log.Fatalf("Failed creating file: %s", err)
 	}
@@ -140,6 +142,7 @@ func saveText(text string, expiration string) (string, error) {
 	return id, nil
 }
 
+// stringInSlice returns true if the given string is in the list
 func stringInSlice(toFind string, list []string) bool {
 	for _, val := range list {
 		if val == toFind {
@@ -149,7 +152,6 @@ func stringInSlice(toFind string, list []string) bool {
 	return false
 }
 
-// generateId code from https://stackoverflow.com/questions/22892120
 const (
 	letterBytes   = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 	letterIdxBits = 6                    // 6 bits to represent a letter index
@@ -161,6 +163,8 @@ var (
 	random = rand.NewSource(time.Now().UTC().UnixNano())
 )
 
+// generateId generates a random string
+// https://stackoverflow.com/questions/22892120
 func generateId(n int) string {
 	sb := strings.Builder{}
 	sb.Grow(n)
