@@ -1,7 +1,24 @@
 <app>
-  <h1>catbin</h1>
-  <encrypt if={ !state.id } saveText={ saveText } />
-  <decrypt if={ state.id } text={ state.text } expiration={ state.expiration }   />
+  <div id="container">
+    <div class="header pure-menu pure-menu-horizonal">
+      <a class="pure-menu-heading">catbin</a>
+    </div>
+
+    <div class="pure-g">
+      <div class="content pure-u-1">
+        <encrypt if={ !state.id } saveText={ saveText } />
+        <decrypt if={ state.id } text={ state.text } expiration={ state.expiration }   />
+      </div>
+    </div>
+  </div>
+
+
+  <style>
+    #container {
+      margin: 1em;
+    }
+  </style>
+
 
   <script>
     export default {

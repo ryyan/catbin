@@ -1,31 +1,59 @@
 <encrypt>
-  <form>
-    <textarea id="text" type="text" rows="30" cols="90" 
-      onkeyup={ editText } 
-      value={ state.encryptedText || state.text } 
-      disabled={ state.pass }>
-    </textarea>
-    <br />
+  <form id="encrypt" class="pure-form pure-form-stacked">
+    <fieldset>
+      <textarea id="text" type="text" rows="30"
+        class="pure-input-1"
+        onkeyup={ editText } 
+        value={ state.encryptedText || state.text } 
+        disabled={ state.pass }>
+      </textarea>
 
-    <label for="password">Encryption Password:</label>
-    <input id="password" name="password" type="text" 
-      onkeyup={ editPass } 
-      value={ state.pass } 
-      disabled={ !state.text } />
-    <br />
+      <label for="password">Password</label>
+      <input id="password" type="password"
+        class="pure-input-1-2"
+        onkeyup={ editPass } 
+        value={ state.pass } 
+        disabled={ !state.text } />
 
-    <label for="expiration">Expiration:</label>
-    <select id="expiration" name="expiration" onchange={ selectExpiration } value={ state.expiration }>
-      <option value="hour">1 Hour</option>
-      <option value="day">1 Day</option>
-      <option value="week">1 Week</option>
-      <option value="month">1 Month</option>
-      <option value="year">1 Year</option>
-    </select>
-    <br />
+      <label for="expiration">Expiration</label>
+      <select id="expiration"
+        class="pure-input-1-2"
+        onchange={ selectExpiration }
+        value={ state.expiration }>
+        <option value="hour">1 Hour</option>
+        <option value="day">1 Day</option>
+        <option value="week">1 Week</option>
+        <option value="month">1 Month</option>
+        <option value="year">1 Year</option>
+      </select>
 
-    <button type="button" disabled={ !state.text || !state.pass } onclick={ submit }>Submit</button>
+      <button
+        class="pure-button pure-button-primary"
+        disabled={ !state.text || !state.pass }
+        onclick={ submit }>Submit</button>
+    </fieldset>
   </form>
+
+
+  <style>
+    #encrypt * {
+      margin-bottom: 1em;
+    }
+
+    #encrypt label {
+      margin-bottom: 0em;
+    }
+
+    #encrypt textarea:disabled,
+    #encrypt input:disabled,
+    #encrypt textarea:enabled,
+    #encrypt input:enabled {
+      color: black;
+      background: white;
+      margin-bottom: 1em;
+    }
+  </style>
+
 
   <script>
     import { encrypt } from "./encryption.js";

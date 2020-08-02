@@ -1,19 +1,48 @@
 <decrypt>
-  <form>
-    <textarea id="text" type="text" rows="30" cols="90" 
-      value={ state.decryptedText || state.text } 
-      disabled>
-    </textarea>
-    <br />
+  <form id="decrypt" class="pure-form pure-form-stacked">
+    <fieldset>
+      <textarea id="text" type="text" rows="30"
+        class="pure-input-1" 
+        value={ state.decryptedText || state.text } 
+        disabled>
+      </textarea>
+      <br />
 
-    <label for="password">Decryption Password:</label>
-    <input id="password" name="password" type="text" 
-      onkeyup={ editPass } 
-      value={ state.pass } />
-    <br />
+      <label for="password">Password</label>
+      <input id="password" type="password"
+        class="pure-input-1-2"
+        onkeyup={ editPass } 
+        value={ state.pass } />
+      <br />
 
-    <label for="expiration">Expires on:</label> { state.expiration }
+      <label for="expiration">Expiration</label>
+      <input id="expiration" type="text"
+        class="pure-input-1-2"
+        value={ state.expiration }
+        disabled />
+    </fieldset>
   </form>
+
+
+  <style>
+    #decrypt * {
+      margin-bottom: 1em;
+    }
+
+    #decrypt label {
+      margin-bottom: 0em;
+    }
+
+    #decrypt textarea:disabled,
+    #decrypt input:disabled,
+    #decrypt textarea:enabled,
+    #decrypt input:enabled {
+      color: black;
+      background: white;
+      margin-bottom: 1em;
+    }
+  </style>
+
 
   <script>
     import { decrypt } from "./encryption.js";
