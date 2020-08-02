@@ -1,20 +1,76 @@
 <app>
   <h1>catbin</h1>
-  <encrypt if={ !state.id } />
-  <decrypt id={ state.id } if={ state.id } />
+  <encrypt if={ !state.id } saveText={ saveText } />
+  <decrypt if={ state.id } text={ state.text } expiration={ state.expiration }   />
 
   <script>
     export default {
       onBeforeMount(props, state) {
+        // simple router using id in the path
         let id = "";
-        const path = window.location.pathname;
-        if (path !== "/") {
-          id = path.split("/")[1];
+        
+        id = document.location.search.substring(1);
+        if(id) {
+          this.getText(id);
+        } else {
+          this.state = {
+            id: id,
+            expiration: "",
+            text: "",
+          };
+        }
+      },
+
+      getText(id) {
+        const xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        xhr.open("GET", `/msg/${id}`);
+        xhr.send();
+
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            const response = JSON.parse(xhr.response);
+            this.update({
+              id: id,
+              expiration: response.expiration,
+              text: response.text,
+            });
+          } else {
+            document.location = document.location.origin;
+            this.update({
+              id: "",
+              expiration: "",
+              text: "",
+            });
+            alert("Text not found");
+          }
         }
 
-        this.state = {
-          id: id,
-        };
+        xhr.onerror = () => {
+          console.log(xhr);
+        }
+      },
+
+      saveText(text, expiration) {
+        const xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        xhr.open("POST", "/msg");
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.send(`text=${encodeURIComponent(text)}&expiration=${expiration}`);
+
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            const id = xhr.response;
+            document.location.search = `?${id}`;
+            this.getText(id);
+          } else {
+            alert(xhr.response);
+          }
+        }
+
+        xhr.onerror = () => {
+          console.log(xhr);
+        }
       },
     }
   </script>

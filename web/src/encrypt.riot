@@ -69,8 +69,9 @@
       },
 
       submit(e) {
-        console.log(this.state);
-      }
+        e.preventDefault()
+        this.props.saveText(this.state.encryptedText, this.state.expiration)
+      },
     }
   </script>
 </encrypt>

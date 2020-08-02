@@ -12,7 +12,7 @@
       value={ state.pass } />
     <br />
 
-    <label for="expiration">Expires on:</label> ...
+    <label for="expiration">Expires on:</label> { state.expiration }
   </form>
 
   <script>
@@ -20,13 +20,11 @@
 
     export default {
       onBeforeMount(props, state) {
-        console.log(props.id);
-
         this.state = {
-          text: "",
+          text: props.text,
+          expiration: props.expiration,
           pass: "",
           decryptedText: "",
-          expiration: "hour",
         };
       },
 
