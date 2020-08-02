@@ -1,17 +1,27 @@
 package main
 
 import (
-	"io"
 	"errors"
+	"io"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
+
+const (
+	Day = time.Hour * 24
+	Week = Day * 7
+	Month = Day * 31
+	Year = Day * 365
+)
+
 
 var (
 	expirations = []string{"hour", "day", "week", "month", "year"}
 )
+
 
 func main() {
 	// Create directory that messages will be saved to
@@ -53,6 +63,7 @@ func handler(res http.ResponseWriter, req *http.Request) {
 }
 
 func getText(id string) (string, error) {
+	// validate
 	if id == "" {
 		return "", errors.New("Missing id")
 	}
@@ -62,12 +73,30 @@ func getText(id string) (string, error) {
 }
 
 func saveText(text string, expiration string) (result string, err error) {
+	// validate
 	if text == "" {
 		return "", errors.New("Missing field: text")
 	}
 	if !stringInSlice(expiration, expirations) {
 		return "", errors.New("Missing or invalid field: expiration")
 	}
+
+	// calculate expiration date
+	expirationDate := time.Now().UTC()
+	switch expiration {
+	case "hour":
+		expirationDate = expirationDate.Add(time.Hour)
+	case "day":
+		expirationDate = expirationDate.Add(Day)
+	case "week":
+		expirationDate = expirationDate.Add(Week)
+	case "month":
+		expirationDate = expirationDate.Add(Month)
+	case "year":
+		expirationDate = expirationDate.Add(Year)
+	}
+
+	log.Println(expirationDate)
 
 	return "OK", nil
 }
