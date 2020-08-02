@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"errors"
 	"io"
@@ -9,12 +10,14 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
 
 const (
-	// Directory that texts will be saved to
+	// TextDir is the directory that texts will be saved to
+	// The filename will be the text ID, first line the expiration, second line the text itself
 	TextDir = ".text"
 
 	// Expiration times and format
@@ -26,17 +29,29 @@ const (
 )
 
 var (
+	// expirations holds the possible expiration (enum) values
 	expirations = []string{"hour", "day", "week", "month", "year"}
+
+	// textCache holds the map of texts, key=ID, value=expirationDate
+	// This way we don't have to read all the text files over and over to find those expired
+	textCache = make(map[string]time.Time)
 )
 
+// response is the json type returned when getting a text
 type response struct {
 	Expiration string `json:"expiration"`
 	Text       string `json:"text"`
 }
 
 func main() {
-	// Create texts directory
+	// Create text directory
 	os.Mkdir(TextDir, 0755)
+
+	// Scan text directory, clean old texts, and cache current
+	initialScan()
+
+	// Start scanner goroutine
+	go cleaner()
 
 	// Set endpoints
 	serveMux := http.NewServeMux()
@@ -45,7 +60,7 @@ func main() {
 	serveMux.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("../web/dist"))))
 
 	// Start server
-	log.Println("Serving http at localhost:5000")
+	log.Println("Server started at localhost:5000")
 	log.Fatal(http.ListenAndServe(":5000", serveMux))
 }
 
@@ -76,7 +91,7 @@ func handler(res http.ResponseWriter, req *http.Request) {
 func getText(id string) (string, error) {
 	// validate
 	if id == "" {
-		return "", errors.New("Missing id")
+		return "", errors.New("Missing field: id")
 	}
 
 	// read text file
@@ -91,9 +106,7 @@ func getText(id string) (string, error) {
 		Expiration: dataArr[0],
 		Text:       dataArr[1],
 	})
-	if err != nil {
-		log.Fatalf("Failed to marshal json: %s", err)
-	}
+	check(err)
 
 	return string(result), nil
 }
@@ -124,22 +137,111 @@ func saveText(text string, expiration string) (string, error) {
 	expirationStr := expirationDate.Format(DateFormat)
 
 	// generate ID
-	id := generateId(36)
+	id := generateId(33)
 
 	// create text file
 	file, err := os.Create(TextDir + "/" + id)
-	if err != nil {
-		log.Fatalf("Failed creating file: %s", err)
-	}
+	check(err)
 	defer file.Close()
 
 	// save text file
 	_, err = file.WriteString(expirationStr + "\n" + text)
-	if err != nil {
-		log.Fatalf("Failed writing to file: %s", err)
-	}
+	check(err)
+
+	// save text to cache
+	textCache[id] = expirationDate
 
 	return id, nil
+}
+
+func initialScan() {
+	deleted := 0
+
+	// get current datetime
+	now := time.Now().UTC()
+
+	// get path to text directory
+	path, err := os.Getwd()
+	check(err)
+	path = path + "/" + TextDir
+	log.Printf("Scanning %s\n", path)
+
+	// iterate over files in text directory
+	filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+		check(err)
+		if info.Name() == TextDir {
+			return nil
+		}
+
+		// the filename is the text ID
+		id := info.Name()
+
+		// read the first line of the file to get the expiration date
+		file, err := os.Open(path)
+		check(err)
+		defer file.Close()
+		scanner := bufio.NewScanner(file)
+		scanner.Scan()
+		expiration := scanner.Text()
+		err = scanner.Err()
+		check(err)
+		expirationDate, err := time.Parse(DateFormat, expiration)
+		check(err)
+
+		// delete text if expired
+		if expirationDate.Before(now) {
+			err := os.Remove(path)
+			check(err)
+			deleted += 1
+			return nil
+		}
+
+		// save text to cache
+		textCache[id] = expirationDate
+
+		return nil
+	})
+
+	log.Printf("Deleted %d\n", deleted)
+	log.Printf("Cached %d\n", len(textCache))
+}
+
+func cleaner() {
+	// infinite loop since this is a background job
+	for {
+		// sleep between scans
+		time.Sleep(time.Minute * 11)
+
+		deleted := 0
+
+		// get current datetime
+		now := time.Now().UTC()
+
+		// get path to text directory
+		path, err := os.Getwd()
+		check(err)
+		path = path + "/" + TextDir
+
+		// iterate over text cache and delete expired texts
+		for id, expirationDate := range textCache {
+			if expirationDate.Before(now) {
+				err := os.Remove(path + "/" + id)
+				check(err)
+				deleted += 1
+			}
+		}
+
+		if deleted > 0 {
+			log.Printf("Cleaned %d\n", deleted)
+		}
+	}
+}
+
+// check reduces the amount of if err != nil spam
+func check(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // stringInSlice returns true if the given string is in the list
