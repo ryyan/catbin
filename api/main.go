@@ -230,6 +230,7 @@ func cleaner() {
 			if expirationDate.Before(now) {
 				err := os.Remove(path + "/" + id)
 				check(err)
+				delete(textCache, id)
 				deleted += 1
 			}
 		}
