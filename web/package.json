@@ -5,14 +5,14 @@
   "main": "index.js",
   "private": "true",
   "dependencies": {
-    "purecss": "^2.0.3",
-    "riot": "^4.13.2"
+    "purecss": "^3.0.0",
+    "riot": "^7.1.0"
   },
   "devDependencies": {
-    "@riotjs/hot-reload": "^4.0.1",
-    "@riotjs/compiler": "^4.9.2",
-    "@riotjs/parcel-plugin-riot": "^4.0.1",
-    "parcel-bundler": "^1.12.4"
+    "@riotjs/hot-reload": "^6.0.1",
+    "@riotjs/compiler": "^6.4.2",
+    "@riotjs/parcel-plugin-riot": "^6.0.0",
+    "parcel": "^2.0.0"
   },
   "scripts": {
     "build": "parcel build index.html --out-dir=dist",
