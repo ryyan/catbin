@@ -2,6 +2,8 @@
 
 Anonymous encrypted pastebin
 
+https://github.com/ryyan/catbin/assets/4228816/35f1689e-d072-46d8-bb80-ae7f53d5cfb0
+
 ## Getting started
 
 ```sh
