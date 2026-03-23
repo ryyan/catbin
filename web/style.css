@@ -1,0 +1,222 @@
+:root {
+  --bg: #0a0a0a;
+  --fg: #e0e0e0;
+  --card-bg: #141414;
+  --border: #262626;
+  --border-focus: #404040;
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --error: #ef4444;
+  --success: #22c55e;
+  --meta: #737373;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font);
+  background-color: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: 2em;
+}
+
+#container {
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1.25em;
+}
+
+/* Header & Logo */
+.site-header {
+  padding: 0.75em 0;
+  margin-bottom: 0.25em;
+}
+
+.logo {
+  font-size: 1.4em;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #fff;
+  background: linear-gradient(to bottom right, #fff, #a3a3a3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Main Card */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5em;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.75em;
+}
+
+/* Form Elements */
+textarea, input, select {
+  width: 100%;
+  padding: 0.9em;
+  margin-bottom: 1em;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: var(--mono);
+  font-size: 0.95em;
+  background-color: #000;
+  color: var(--fg);
+  transition: all 0.2s ease;
+}
+
+@media (max-width: 400px) {
+  textarea, input, select {
+    font-size: 0.85em;
+    padding: 0.8em;
+  }
+}
+
+textarea:focus, input:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+textarea {
+  min-height: 400px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5em;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--meta);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  margin-top: 0.5em;
+}
+
+@media (min-width: 600px) {
+  .form-grid {
+    flex-direction: row;
+  }
+  .form-grid .field {
+    flex: 1;
+  }
+}
+
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  align-items: center;
+  margin-top: 1.5em;
+}
+
+/* Buttons */
+button, .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 0.8em 2em;
+  font-size: 0.95em;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.1s, background-color 0.2s;
+  text-decoration: none;
+}
+
+button:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #262626;
+  color: var(--fg);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #333333;
+}
+
+/* Utils */
+.status-msg {
+  font-size: 0.85em;
+  font-weight: 500;
+  color: var(--meta);
+}
+
+.error-text { color: var(--error); }
+.success-text { color: var(--success); }
+
+.stealth-input {
+  -webkit-text-security: disc;
+  text-security: disc;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-focus);
+}

@@ -1,9 +1,81 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>catbin</title>
-<link rel="stylesheet" href="pure-min.css">
-<link rel="stylesheet" href="grids-responsive-min.css">
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-<app></app>
-<script src="src/index.js"></script>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>catbin &mdash; anonymous encrypted pastebin</title>
+  <meta name="description" content="A minimalist, client-side encrypted pastebin.">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="site-header">
+      <nav id="container">
+        <span class="logo">catbin</span>
+      </nav>
+    </header>
+
+    <main id="container">
+      <section id="encrypt-section" class="card" aria-hidden="true" style="display: none;">
+        <form id="encrypt-form">
+          <header class="card-header">
+            <label for="encrypt-text" class="sr-only">Paste Content</label>
+            <span id="char-counter" class="status-msg">0 / 10,000</span>
+          </header>
+          <textarea id="encrypt-text" placeholder="Paste your text here..." autofocus maxlength="10000"></textarea>
+          
+          <div class="form-grid">
+            <div class="field">
+              <!-- .stealth-input uses type="text" to prevent BitWarden/LastPass from triggering, 
+                   while CSS text-security maintains the visual "password" masking -->
+              <label for="encrypt-secret">Encryption Password</label>
+              <input id="encrypt-secret" type="text" class="stealth-input" autocomplete="off" data-lpignore="true" disabled placeholder="Type to encrypt">
+            </div>
+            
+            <div class="field">
+              <label for="encrypt-expiration">Expiration</label>
+              <select id="encrypt-expiration">
+                <option value="burn">Burn on Read</option>
+                <option value="hour">1 Hour</option>
+                <option value="day" selected>1 Day</option>
+                <option value="week">1 Week</option>
+                <option value="month">1 Month</option>
+              </select>
+            </div>
+          </div>
+
+          <footer class="form-actions">
+            <button id="encrypt-submit" type="submit" disabled>Save & Encrypt</button>
+            <span id="encrypt-status" class="status-msg" role="status"></span>
+          </footer>
+        </form>
+      </section>
+
+      <section id="decrypt-section" class="card" aria-hidden="true" style="display: none;">
+        <form id="decrypt-form">
+          <label for="decrypt-text" class="sr-only">Encrypted Content</label>
+          <textarea id="decrypt-text" disabled></textarea>
+          
+          <div class="form-grid">
+            <div class="field">
+              <label for="decrypt-secret">Decryption Password</label>
+              <input id="decrypt-secret" type="text" class="stealth-input" autocomplete="off" data-lpignore="true" placeholder="Enter password" autofocus>
+            </div>
+            
+            <div class="field">
+              <label for="decrypt-expiration">Valid Until</label>
+              <input id="decrypt-expiration" type="text" disabled>
+            </div>
+          </div>
+
+          <footer class="form-actions">
+            <button id="copy-link" type="button" class="btn-secondary">Copy Link</button>
+            <span id="decrypt-status" class="status-msg" role="status"></span>
+          </footer>
+        </form>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

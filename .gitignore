@@ -1,0 +1,11 @@
+# Binaries & Storage (Critical)
+catbin
+.text/
+
+# Go artifacts
+*.test
+*.out
+
+# OS specific files
+.DS_Store
+.DS_Store?
