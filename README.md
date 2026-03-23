@@ -1,8 +1,8 @@
 # catbin
 
-Anonymous encrypted pastebin
+Anonymous zero-knowledge encrypted pastebin
 
-https://github.com/ryyan/catbin/assets/4228816/35f1689e-d072-46d8-bb80-ae7f53d5cfb0
+https://github.com/user-attachments/assets/2c3ec0bd-61bd-4ce1-825c-476919376d5f
 
 ## Getting started
 
